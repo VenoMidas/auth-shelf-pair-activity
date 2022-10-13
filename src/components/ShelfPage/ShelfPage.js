@@ -30,6 +30,16 @@ function ShelfPage() {
     });
   };
 
+  const deleteShelfItem = (shelfItemId) => {
+    console.log('in delete shelf item')
+    axios.delete(`/api/shelf/${shelfItemId}`).then(() => {
+      fetchShelf();
+    }).catch((error) => {
+      console.log(error);
+      alert('Something went wrong');
+    });
+  };
+
   return (
     <div className="container">
       <h2>Add an item to the shelf</h2>
@@ -58,7 +68,7 @@ function ShelfPage() {
               <br />
               <div className="desc">{item.description}</div>
               <div style={{ textAlign: 'center', padding: '5px' }}>
-                <button style={{ cursor: 'pointer' }}>Delete</button>
+                <button onClick={() => deleteShelfItem(item.id)} style={{ cursor: 'pointer' }}>Delete</button>
               </div>
             </div>
           </div>
