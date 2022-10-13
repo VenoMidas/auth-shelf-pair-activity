@@ -4,22 +4,45 @@ import './ShelfPage.css';
 
 function ShelfPage() {
   const [shelfList, setShelfList] = useState([]);
+  const [description, setDescription] = useState([]);
+  const [imgUrl, setImgUrl] = useState([]);
 
   useEffect(() => {
-    fetchPets();
+    fetchShelf();
   }, []);
 
-  const fetchPets = () => {
+  const fetchShelf = () => {
     axios.get('/api/shelf').then((response) => {
       setShelfList(response.data);
     }).catch((error) => {
       console.log(error);
       alert('Something went wrong.');
     });
-  }
+  };
+
+  const addToShelf = (event) => {
+    event.preventDefault(); // stops page refresh on submit
+    axios.post('/api/shelf', { description: description, image_url: imgUrl }).then(() => {
+      fetchShelf();
+    }).catch((error) => {
+      console.log(error);
+      alert('Something went wrong.');
+    });
+  };
 
   return (
     <div className="container">
+      <h2>Add an item to the shelf</h2>
+      <form onSubmit={addToShelf}>
+        <label>Description</label>
+        <input value={description} onChange={(event) => setDescription(event.target.value)} type="text" />
+        <br />
+        <label>Image URL</label>
+        <input value={imgUrl} onChange={(event) => setImgUrl(event.target.value)} type="text" />
+        <br />
+        <input type="submit" />
+      </form>
+
       <h2>Shelf</h2>
       <p>All of the available items can be seen here.</p>
       {
@@ -30,15 +53,15 @@ function ShelfPage() {
       {
         shelfList.map(item => {
           return <div className="responsive" key={item.id}>
-                    <div className="gallery">
-                        <img src={item.image_url} alt={item.description} />
-                        <br />
-                        <div className="desc">{item.description}</div>
-                        <div style={{textAlign: 'center', padding: '5px'}}>
-                          <button style={{cursor: 'pointer'}}>Delete</button>
-                        </div>
-                    </div>
-                 </div>
+            <div className="gallery">
+              <img src={item.image_url} alt={item.description} />
+              <br />
+              <div className="desc">{item.description}</div>
+              <div style={{ textAlign: 'center', padding: '5px' }}>
+                <button style={{ cursor: 'pointer' }}>Delete</button>
+              </div>
+            </div>
+          </div>
         })
       }
       <div className="clearfix"></div>
